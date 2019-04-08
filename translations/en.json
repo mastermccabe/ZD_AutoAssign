@@ -1,0 +1,8 @@
+{
+  "app": {
+    "name": "Auto assign ticket",
+    "short_description": "Auto assign",
+    "long_description": "Private Zendesk app that auto assigns to agent if they view a ticket",
+    "installation_instructions": "Simply click install."
+  }
+}
