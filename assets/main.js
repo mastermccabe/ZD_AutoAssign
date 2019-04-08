@@ -3,10 +3,10 @@ $(function(){
 
   // Store things like this as a constant
   // :-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
-  const GROUP_IDS = [
-    360001785154, // Group Name Here
-    360002693173  // Group Name Here
-  ];
+  // const GROUP_IDS = [
+  //   360001785154, // Group Name Here
+  //   360002693173  // Group Name Here
+  // ];
   // :-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-:-
 
 
@@ -29,13 +29,22 @@ $(function(){
   // ========================================================
   CLIENT.get(['ticket.assignee.user.id','ticket.assignee.group.id','currentUser']).then(function(data){
 
+
     let currentUser = data['currentUser'];
     let assigneeId = data['ticket.assignee.user.id'];
     let groupId = data['ticket.assignee.group.id'];
 
-    if (!assigneeId && GROUP_IDS.includes(groupId)){
-      CLIENT.set('ticket.assignee',{ userId: currentUser.id });
-    }
+
+    CLIENT.metadata().then(function(metadata){
+
+      let groupIds = metadata.settings.group_ids.split(',') // Turns comma separated string into an array
+      .map(function(id){ return parseInt(id); }) // Turns the array of strings into an array of integers
+      
+      if (!assigneeId && groupIds.includes(groupId)){
+        CLIENT.set('ticket.assignee',{ userId: currentUser.id });
+      }
+
+    });
 
   });
   // Old
@@ -59,7 +68,7 @@ $(function(){
       CLIENT.invoke('enableSave');
     } else {
       CLIENT.invoke('notify','<b>Agent Assignment Required</b><p></p><p>All tickets must have a user assigned<p>','error',4000);
-			CLIENT.invoke('disableSave');
+      CLIENT.invoke('disableSave');
     }
 
   });
